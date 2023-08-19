@@ -1,26 +1,42 @@
 class HashTable {
-	constructor(size) {
-		this._fixedSize = size;
+	constructor(fixedSize) {
+		this.fixedSize = fixedSize;
 		this._data = new Array();
 	}
 
-	get(key) {
-		for (let i = 0; i < this._data.length; i++) {
-			if (this._data[i][0] === key) {
-				return this._data[i];
+	find(key) {
+		const blocks = [];
+		const bucketLists = this._data;
+
+		for (let i = 0; i < bucketLists.length; i++) {
+			// first level of bucket list for the key
+			const levelOne = bucketLists[i][0];
+
+			if (levelOne === key) {
+				blocks.push(...bucketLists[i]);
+			}
+
+			for (let j = 0; j < levelOne.length; j++) {
+				const hashCollision = levelOne[j];
+
+				if (hashCollision[0] === key) {
+					blocks.push(hashCollision);
+				}
 			}
 		}
+
+		return blocks;
 	}
 
 	set(key, value) {
-		if (!this._isAllowedPushData(this._fixedSize, this._data.length)) {
+		if (!this._isAllowedPushData(this.fixedSize, this._data.length)) {
 			this._printErrorMessage('You are not allowed to add more item');
 		}
 
 		this._data.push([key, value]);
 
 		if (this._isDuplicatedKey(key)) {
-			const duplicatedItem = this._getDuplicatedItem(key);
+			const duplicatedItem = this._findDuplicatedItem(key);
 
 			this._addHashCollision(duplicatedItem);
 			this._removeDuplicatedItem(key);
@@ -41,7 +57,7 @@ class HashTable {
 		return allowedSize > currentData;
 	}
 
-	_getDuplicatedItem(keyLookup) {
+	_findDuplicatedItem(keyLookup) {
 		const duplicatedItem = [];
 
 		for (let i = 0; i < this._data.length; i++) {
@@ -66,16 +82,14 @@ class HashTable {
 		const seenItem = {};
 
 		return this._data.some((item) => {
-			if (Array.isArray(item)) {
-				const [keyExist] = item;
+			const [keyExist] = item;
 
-				if (keyExist === keyLookup && seenItem[keyExist]) {
-					return true; // Duplicate key found
-				}
-
-				seenItem[keyExist] = true;
-				return false;
+			if (keyExist === keyLookup && seenItem[keyExist]) {
+				return true; // Duplicate key found
 			}
+
+			seenItem[keyExist] = true;
+			return false;
 		});
 	}
 
@@ -90,13 +104,13 @@ class HashTable {
 	}
 }
 
-const myHashTable = new HashTable(50);
+const hashTable = new HashTable(50);
 
-myHashTable.set('grapes', 10_000);
-myHashTable.set('grapes', 20_000);
-myHashTable.set('apple', 50);
-myHashTable.set('apple', 520);
+hashTable.set('grapes', 10_000);
+hashTable.set('grapes', 20_000);
+hashTable.set('apple', 50);
+hashTable.set('apple', 520);
 
-myHashTable.set('banana', 150);
+hashTable.set('banana', 150);
 
-console.log(myHashTable);
+console.log(hashTable.find('grapes'));
