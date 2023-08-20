@@ -34,6 +34,35 @@ class HashTable {
 		return foundBuckets;
 	}
 
+	deleteByValue(valueLookup) {
+		for (const [addressKey, bucket] of Object.entries(this._data)) {
+			for (const [bucketKey, bucketValue] of Object.entries(bucket)) {
+				if (bucketValue === valueLookup) {
+					const firstItem = Object.keys(bucket)[0];
+
+					if (firstItem) {
+						delete bucket[firstItem];
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	deleteAllByValue(valueLookup) {
+		for (const [addressKey, bucket] of Object.entries(this._data)) {
+			for (const [bucketKey, bucketValue] of Object.entries(bucket)) {
+				if (bucketValue === valueLookup) {
+					const firstItem = Object.keys(bucket)[0];
+
+					if (firstItem) {
+						delete bucket[firstItem];
+					}
+				}
+			}
+		}
+	}
+
 	_getBuckets(bucket) {
 		return Object.entries(bucket).map(([_, bucketItem]) => bucketItem);
 	}
@@ -98,6 +127,9 @@ hashTable.set('apple', 50);
 
 hashTable.set('banana', 150);
 
-console.log(hashTable.findValue(10_000));
+hashTable.deleteByValue(50);
+hashTable.deleteByValue(50);
 
+
+console.log(hashTable.getAllBuckets());
 // console.log(hashTable.find('grapes'));
