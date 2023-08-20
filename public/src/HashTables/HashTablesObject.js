@@ -52,6 +52,24 @@ class HashTable {
 				}
 			}
 		}
+
+		const allocationAddresses = this.#getAllocationAddresses(this.#data);
+
+		this.#deleteAllocationAddress(allocationAddresses);
+	}
+
+	#deleteAllocationAddress(allocationAddresses) {
+		for (let i = 0; i < allocationAddresses.length; i++) {
+			const allocationAddress = allocationAddresses[i];
+
+			if (this.#isEmptyObject(this.#data[allocationAddress])) {
+				delete this.#data[allocationAddress];
+			}
+		}
+	}
+
+	#getAllocationAddresses() {
+		return Object.keys(this.#data);
 	}
 
 	deleteAllByValue(valueLookup) {
@@ -70,7 +88,7 @@ class HashTable {
 		}
 	}
 
-	#_isEmptyObject(object) {
+	#isEmptyObject(object) {
 		return Object.values(object).length === 0;
 	}
 
@@ -106,17 +124,29 @@ class HashTable {
 		return value % this.#numberElements;
 	}
 
+	// * This solution is O(1)
 	#insertAllocatedItem(payload) {
 		const { key, value, calculatedAllocationAddress } = payload;
 
-		this.#data = {
-			...this.#data,
-			[calculatedAllocationAddress]: {
-				...this.#data[calculatedAllocationAddress],
-				[this.#hash(key)]: value,
-			},
-		};
+		const addressData = this.#data[calculatedAllocationAddress] || {};
+
+		addressData[this.#hash(key)] = value;
+
+		this.#data[calculatedAllocationAddress] = addressData;
 	}
+
+	// ! ⛔️ This solution is O(n)
+	// #insertAllocatedItem(payload) {
+	// 	const { key, value, calculatedAllocationAddress } = payload;
+
+	// 	this.#data = {
+	// 		...this.#data,
+	// 		[calculatedAllocationAddress]: {
+	// 			...this.#data[calculatedAllocationAddress],
+	// 			[this.#hash(key)]: value,
+	// 		},
+	// 	};
+	// }
 
 	#hash(key) {
 		return `${key}-${crypto.randomUUID()}`;
@@ -138,8 +168,10 @@ hashTable.set('apple', 50);
 
 hashTable.set('banana', 150);
 
-hashTable.deleteByValue(50);
+hashTable.set('orange', 1);
+hashTable.set('orange', 1010);
+
+// hashTable.deleteByValue(50);
 hashTable.deleteByValue(50);
 
 console.log(hashTable.getAllBuckets());
-// console.log(hashTable.find('grapes'));
