@@ -1,24 +1,27 @@
 class HashTable {
+	#data = {};
+	#fixedSize;
+	#numberElements;
+
 	constructor(fixedSize, numberElements) {
-		if (this._isNumberElement(numberElements)) {
-			this._printErrorMessage('Number of elements required!');
+		if (this.#isNumberElement(numberElements)) {
+			this.#printErrorMessage('Number of elements required!');
 		}
 
-		this._data = {};
-		this.fixedSize = fixedSize;
-		this.numberElements = numberElements;
+		this.#fixedSize = fixedSize;
+		this.#numberElements = numberElements;
 	}
 
-	_isNumberElement(numberElements) {
+	#isNumberElement(numberElements) {
 		return isNaN(numberElements);
 	}
 
 	getAllBuckets() {
-		return this._data;
+		return this.#data;
 	}
 
 	findValue(valueLookup) {
-		const buckets = this._getBuckets(this._data);
+		const buckets = this.#getBuckets(this.#data);
 		const foundBuckets = {};
 
 		for (let i = 0; i < buckets.length; i++) {
@@ -35,7 +38,9 @@ class HashTable {
 	}
 
 	deleteByValue(valueLookup) {
-		for (const [addressKey, bucket] of Object.entries(this._data)) {
+		const buckets = this.#getBuckets(this.#data);
+
+		for (const bucket of buckets) {
 			for (const [bucketKey, bucketValue] of Object.entries(bucket)) {
 				if (bucketValue === valueLookup) {
 					const firstItem = Object.keys(bucket)[0];
@@ -50,7 +55,9 @@ class HashTable {
 	}
 
 	deleteAllByValue(valueLookup) {
-		for (const [addressKey, bucket] of Object.entries(this._data)) {
+		const buckets = this.#getBuckets(this.#data);
+
+		for (const bucket of buckets) {
 			for (const [bucketKey, bucketValue] of Object.entries(bucket)) {
 				if (bucketValue === valueLookup) {
 					const firstItem = Object.keys(bucket)[0];
@@ -63,18 +70,22 @@ class HashTable {
 		}
 	}
 
-	_getBuckets(bucket) {
+	#_isEmptyObject(object) {
+		return Object.values(object).length === 0;
+	}
+
+	#getBuckets(bucket) {
 		return Object.entries(bucket).map(([_, bucketItem]) => bucketItem);
 	}
 
 	set(key, value) {
-		const countItems = Object.keys(this._data).length;
+		const countItems = Object.keys(this.#data).length;
 
-		if (!this._isAllowedInsertData(this.fixedSize, countItems)) {
-			this._printErrorMessage('You are not allowed to add more item');
+		if (!this.#isAllowedInsertData(this.#fixedSize, countItems)) {
+			this.#printErrorMessage('You are not allowed to add more item');
 		}
 
-		const calculatedAllocationAddress = this._getCalculatedAllocationAddress(value);
+		const calculatedAllocationAddress = this.#getCalculatedAllocationAddress(value);
 
 		const itemPayload = {
 			key,
@@ -82,36 +93,36 @@ class HashTable {
 			calculatedAllocationAddress,
 		};
 
-		this._insertAllocatedItem(itemPayload);
+		this.#insertAllocatedItem(itemPayload);
 
 		return this;
 	}
 
-	_isAllowedInsertData(allowedSize, currentData) {
+	#isAllowedInsertData(allowedSize, currentData) {
 		return allowedSize > currentData;
 	}
 
-	_getCalculatedAllocationAddress(value) {
-		return value % this.numberElements;
+	#getCalculatedAllocationAddress(value) {
+		return value % this.#numberElements;
 	}
 
-	_insertAllocatedItem(payload) {
+	#insertAllocatedItem(payload) {
 		const { key, value, calculatedAllocationAddress } = payload;
 
-		this._data = {
-			...this._data,
+		this.#data = {
+			...this.#data,
 			[calculatedAllocationAddress]: {
-				...this._data[calculatedAllocationAddress],
-				[this._hash(key)]: value,
+				...this.#data[calculatedAllocationAddress],
+				[this.#hash(key)]: value,
 			},
 		};
 	}
 
-	_hash(key) {
+	#hash(key) {
 		return `${key}-${crypto.randomUUID()}`;
 	}
 
-	_printErrorMessage(errorMessage) {
+	#printErrorMessage(errorMessage) {
 		throw new Error(errorMessage);
 	}
 }
@@ -129,7 +140,6 @@ hashTable.set('banana', 150);
 
 hashTable.deleteByValue(50);
 hashTable.deleteByValue(50);
-
 
 console.log(hashTable.getAllBuckets());
 // console.log(hashTable.find('grapes'));
