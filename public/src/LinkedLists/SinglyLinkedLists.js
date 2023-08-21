@@ -1,50 +1,47 @@
 class SinglyLinkedLists {
 	constructor(value) {
-		this.head = {
-			value: value,
-			id: this.#createMemorySpaceAllocation(),
-			nextNode: null,
-		};
+		this.head = this.#createNewNode(value);
 
+		this.tail = this.head; // Initialize tail to head
 		this.length = 0;
+		this._nodeCollections = {};
 	}
 
-	insertNextNode(value) {
-		const newNode = {
-			value: value,
-			id: this.#createMemorySpaceAllocation(),
-			nextNode: null,
-		};
+	prependNode(value) {
+		const currentNode = this.head;
+	}
 
-		let currentNode = this.head;
-
-		while (currentNode.nextNode !== null) {
-			currentNode = currentNode.nextNode;
-		}
-
-		currentNode.nextNode = newNode;
-
+	appendNode(value) {
 		this.length++;
+
+		const newNode = this.#createNewNode(value);
+
+		this.#appendNextNode(newNode);
+		this.#appendNewTailNode(newNode);
+		this.#appendNewNodeCollections(newNode);
 
 		return this;
 	}
 
-	insertTail(value) {
-		const tailNode = {
-			value: value,
+	#appendNewNodeCollections(newNode) {
+		this._nodeCollections[this.length] = newNode;
+	}
+
+	#appendNextNode(newNode) {
+		this.tail.nextNode = newNode;
+	}
+
+	#appendNewTailNode(newNode) {
+		this.tail = newNode;
+	}
+
+	#createNewNode(value) {
+		return {
 			id: this.#createMemorySpaceAllocation(),
+			value: value,
 			nextNode: null,
+			length: this.length ?? 0,
 		};
-
-		let currentNode = this.head;
-
-		while (currentNode.nextNode !== null) {
-			currentNode = currentNode.nextNode;
-		}
-
-		currentNode.nextNode = tailNode;
-
-		this.length++;
 	}
 
 	#createMemorySpaceAllocation(minValue = 1000, maxValue = 9999) {
@@ -57,8 +54,7 @@ class SinglyLinkedLists {
 
 const singlyLinkedLists = new SinglyLinkedLists(2);
 
-singlyLinkedLists.insertNextNode(5).insertNextNode(10).insertNextNode(20);
-
-singlyLinkedLists.insertTail(999);
+singlyLinkedLists.appendNode(5);
+singlyLinkedLists.appendNode(51).appendNode(100);
 
 console.log(singlyLinkedLists);
