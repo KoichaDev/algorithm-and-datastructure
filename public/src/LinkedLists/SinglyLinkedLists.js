@@ -4,8 +4,7 @@ class SinglyLinkedLists {
 		this.tail = this.head;
 		this.length = 0;
 
-		this._collections = {};
-		this.#appendNodeCollections(this.head);
+		this.nodeCollections = {};
 	}
 
 	prependNode(value) {
@@ -14,8 +13,6 @@ class SinglyLinkedLists {
 		newNode.nextNode = this.head;
 		this.head = newNode;
 		this.length++;
-
-		this.#appendNodeCollections(newNode, true);
 	}
 
 	appendNode(value) {
@@ -24,7 +21,6 @@ class SinglyLinkedLists {
 		this.tail.nextNode = newNode;
 		this.tail = newNode;
 		this.length++;
-		this.#appendNodeCollections(newNode);
 	}
 
 	lookup(value) {
@@ -61,8 +57,20 @@ class SinglyLinkedLists {
 		newNode.nextNode = currentTraversedIndex;
 	}
 
-	#appendNodeCollections(newNode) {
-		this._collections[this.length] = newNode;
+	getReverseNodeCollections() {
+		let currentLength = this.length;
+		let reversedIndex = 0;
+
+		while (currentLength >= 0) {
+			const reversedNode = this.#traverseToIndex(currentLength);
+
+			this.nodeCollections[reversedIndex] = reversedNode.value;
+
+			reversedIndex++;
+			currentLength--;
+		}
+
+		return this.nodeCollections;
 	}
 
 	#createNewNode(value) {
@@ -95,5 +103,7 @@ singlyLinkedLists.appendNode(5);
 // singlyLinkedLists.prependNode(9);
 // singlyLinkedLists.insert(5, 20);
 // singlyLinkedLists.delete(3);
+
+singlyLinkedLists.getReverseNodeCollections();
 
 console.log(singlyLinkedLists);
