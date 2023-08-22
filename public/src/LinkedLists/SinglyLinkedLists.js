@@ -24,6 +24,20 @@ class SinglyLinkedLists {
 		return this;
 	}
 
+	lookup(value) {
+		let currentNode = this.head;
+
+		while (currentNode !== null) {
+			if (currentNode.value === value) {
+				return currentNode.value;
+			}
+
+			currentNode = currentNode.nextNode;
+		}
+
+		return null;
+	}
+
 	#createNewNode(value) {
 		return {
 			value: value,
@@ -39,4 +53,6 @@ singlyLinkedLists.appendNode(51).appendNode(100);
 
 singlyLinkedLists.prependNode(9);
 
-console.log(singlyLinkedLists);
+const result = singlyLinkedLists.lookup(51);
+
+console.log(result);
