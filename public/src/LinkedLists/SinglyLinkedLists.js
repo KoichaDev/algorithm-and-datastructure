@@ -1,8 +1,11 @@
 class SinglyLinkedLists {
 	constructor(value) {
 		this.head = this.#createNewNode(value);
-		this.tail = this.head; // this will be our reference to create nested nextNode
+		this.tail = this.head;
 		this.length = 0;
+
+		this._collections = {};
+		this.#appendNodeCollections(this.head);
 	}
 
 	prependNode(value) {
@@ -11,17 +14,17 @@ class SinglyLinkedLists {
 		newNode.nextNode = this.head;
 		this.head = newNode;
 		this.length++;
+
+		this.#appendNodeCollections(newNode, true);
 	}
 
 	appendNode(value) {
-		this.length++;
-
 		const newNode = this.#createNewNode(value);
 
 		this.tail.nextNode = newNode;
 		this.tail = newNode;
-
-		return this;
+		this.length++;
+		this.#appendNodeCollections(newNode);
 	}
 
 	lookup(value) {
@@ -38,21 +41,59 @@ class SinglyLinkedLists {
 		return null;
 	}
 
+	delete(index) {
+		const prevTraversedIndex = this.#traverseToIndex(index - 1);
+		const reconnectTraversedToIndex = this.#traverseToIndex(index + 1);
+		prevTraversedIndex.nextNode = reconnectTraversedToIndex;
+		this.length--;
+	}
+
+	insert(index, value) {
+		const prevIndexPosition = index - 1;
+
+		const prevTraversedIndex = this.#traverseToIndex(prevIndexPosition);
+		const currentTraversedIndex = this.#traverseToIndex(index);
+
+		const newNode = this.#createNewNode(value);
+
+		prevTraversedIndex.nextNode = newNode;
+
+		newNode.nextNode = currentTraversedIndex;
+	}
+
+	#appendNodeCollections(newNode) {
+		this._collections[this.length] = newNode;
+	}
+
 	#createNewNode(value) {
 		return {
 			value: value,
 			nextNode: null,
 		};
 	}
+
+	#traverseToIndex(index) {
+		let count = 0;
+		let currentNode = this.head;
+
+		while (count !== index) {
+			currentNode = currentNode.nextNode;
+			count++;
+		}
+
+		return currentNode;
+	}
 }
 
-const singlyLinkedLists = new SinglyLinkedLists(2);
+const singlyLinkedLists = new SinglyLinkedLists(1);
 
+singlyLinkedLists.appendNode(2);
+singlyLinkedLists.appendNode(3);
+singlyLinkedLists.appendNode(4);
 singlyLinkedLists.appendNode(5);
-singlyLinkedLists.appendNode(51).appendNode(100);
 
-singlyLinkedLists.prependNode(9);
+// singlyLinkedLists.prependNode(9);
+// singlyLinkedLists.insert(5, 20);
+// singlyLinkedLists.delete(3);
 
-const result = singlyLinkedLists.lookup(51);
-
-console.log(result);
+console.log(singlyLinkedLists);
