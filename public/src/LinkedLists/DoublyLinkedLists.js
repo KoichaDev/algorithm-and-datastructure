@@ -103,13 +103,29 @@ class DoublyLinkedLists {
 		}
 	}
 
-	#traverseNode(index) {
+	traverseNode(index, traverseReversed = false) {
 		let count = 0;
 		let currentNode = this.head;
 
-		while (count !== index) {
-			currentNode = currentNode.nextNode;
-			count++;
+		if (!traverseReversed) {
+			while (count !== index) {
+				currentNode = currentNode.nextNode;
+				count++;
+			}
+		}
+
+		return currentNode;
+	}
+
+	#traverseNode(index, traverseReversed = false) {
+		let count = 0;
+		let currentNode = this.head;
+
+		if (!traverseReversed) {
+			while (count !== index) {
+				currentNode = currentNode.nextNode;
+				count++;
+			}
 		}
 
 		return currentNode;
@@ -141,5 +157,9 @@ doublyLinkedLists.reverseNodes();
 // doublyLinkedLists.delete(3);
 
 // doublyLinkedLists.getReverseNodeCollections();
+
+const x = doublyLinkedLists.traverseNode(4)
+
+console.log(x);
 
 console.log(doublyLinkedLists);
