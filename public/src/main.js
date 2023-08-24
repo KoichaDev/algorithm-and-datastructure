@@ -7,6 +7,7 @@
 // import './LinkedLists/DoublyLinkedLists.js';
 // import './StackQueues/StacksLinkedLists.js';
 // import './StackQueues/StacksArray.js';
-import './StackQueues/Queues.js';
+// import './StackQueues/Queues.js';
+import './BinarySearchTrees.js';
 
 // console.log(result);
