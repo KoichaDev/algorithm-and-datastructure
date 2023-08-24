@@ -6,6 +6,7 @@
 // import './LinkedLists/SinglyLinkedLists.js';
 // import './LinkedLists/DoublyLinkedLists.js';
 // import './StackQueues/StacksLinkedLists.js';
-import './StackQueues/StacksArray.js';
+// import './StackQueues/StacksArray.js';
+import './StackQueues/Queues.js';
 
 // console.log(result);
